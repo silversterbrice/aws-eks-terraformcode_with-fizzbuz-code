@@ -508,54 +508,357 @@ root@ip-172-31-13-209:~/EKS#
 
 ## Terraform plan output for fizzbuzz deployment
 ```
-root@ip-172-31-13-209:~/EKS# terraform plan
+root@ip-172-31-13-209:~/EKS_Deploy# terraform plan
 Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
 persisted to local or remote state storage.
 
-data.http.workstation-external-ip: Refreshing state...
-data.aws_region.current: Refreshing state...
-data.aws_availability_zones.available: Refreshing state...
-aws_iam_role.demo-cluster: Refreshing state... [id=terraform-eks-demo-cluster]
-aws_vpc.demo: Refreshing state... [id=vpc-034fd0baaa76af020]
-aws_iam_role.demo-node: Refreshing state... [id=terraform-eks-demo-node]
-aws_iam_role_policy_attachment.demo-cluster-AmazonEKSServicePolicy: Refreshing state... [id=terraform-eks-demo-cluster-20191216030902432200000001]
-aws_iam_role_policy_attachment.demo-cluster-AmazonEKSClusterPolicy: Refreshing state... [id=terraform-eks-demo-cluster-20191216030902435100000002]
-aws_iam_role_policy.demo-cluster-service-linked-role: Refreshing state... [id=terraform-eks-demo-cluster:service-linked-role]
-aws_iam_role_policy_attachment.demo-node-AmazonEKS_CNI_Policy: Refreshing state... [id=terraform-eks-demo-node-20191216030902511700000003]
-aws_iam_role_policy_attachment.demo-node-AmazonEKSWorkerNodePolicy: Refreshing state... [id=terraform-eks-demo-node-20191216030902517300000005]
-aws_iam_role_policy_attachment.demo-node-AmazonEC2ContainerRegistryReadOnly: Refreshing state... [id=terraform-eks-demo-node-20191216030902514100000004]
-aws_iam_instance_profile.demo-node: Refreshing state... [id=terraform-eks-demo]
-aws_subnet.demo[1]: Refreshing state... [id=subnet-0e287e0d8656205fc]
-aws_subnet.demo[2]: Refreshing state... [id=subnet-0a7ff86a38658da7e]
-aws_subnet.demo[0]: Refreshing state... [id=subnet-014242c046eec7013]
-aws_security_group.demo-node: Refreshing state... [id=sg-076fcf751a3551b77]
-aws_security_group.demo-cluster: Refreshing state... [id=sg-0ca999dacdbabf1ee]
-aws_internet_gateway.demo: Refreshing state... [id=igw-058038ed6e29768f3]
-aws_route_table.demo: Refreshing state... [id=rtb-0800b78a76df1e718]
-aws_security_group_rule.demo-cluster-ingress-workstation-https: Refreshing state... [id=sgrule-1897999330]
-aws_security_group_rule.demo-cluster-ingress-node-https: Refreshing state... [id=sgrule-3172215408]
-aws_security_group_rule.demo-node-ingress-self: Refreshing state... [id=sgrule-2153253776]
-aws_security_group_rule.demo-node-ingress-cluster: Refreshing state... [id=sgrule-3938485730]
-aws_eks_cluster.demo: Refreshing state... [id=terraform-eks-cluster]
-aws_route_table_association.demo[1]: Refreshing state... [id=rtbassoc-08de6ceeac3e16f91]
-aws_route_table_association.demo[0]: Refreshing state... [id=rtbassoc-0785cf241cb21a60e]
-data.aws_ami.eks-worker: Refreshing state...
-aws_launch_configuration.demo: Refreshing state... [id=terraform-eks-demo20191216031818994700000006]
-aws_autoscaling_group.demo: Refreshing state... [id=terraform-eks-demo]
 
 ------------------------------------------------------------------------
 
-No changes. Infrastructure is up-to-date.
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
 
-This means that Terraform did not detect any differences between your
-configuration and real physical resources that exist. As a result, no
-actions need to be performed.
-root@ip-172-31-13-209:~/EKS#
+Terraform will perform the following actions:
+
+  # kubernetes_deployment.fizzbuzz_deployment will be created
+  + resource "kubernetes_deployment" "fizzbuzz_deployment" {
+      + id = (known after apply)
+
+      + metadata {
+          + generation       = (known after apply)
+          + name             = "fizzbuzz-blog"
+          + namespace        = "default"
+          + resource_version = (known after apply)
+          + self_link        = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + min_ready_seconds         = 0
+          + paused                    = false
+          + progress_deadline_seconds = 600
+          + replicas                  = 2
+          + revision_history_limit    = 10
+
+          + selector {
+              + match_labels = {
+                  + "app" = "fizzbuzz-blog"
+                }
+            }
+
+          + strategy {
+              + type = (known after apply)
+
+              + rolling_update {
+                  + max_surge       = (known after apply)
+                  + max_unavailable = (known after apply)
+                }
+            }
+
+          + template {
+              + metadata {
+                  + generation       = (known after apply)
+                  + labels           = {
+                      + "app" = "fizzbuzz-blog"
+                    }
+                  + name             = (known after apply)
+                  + resource_version = (known after apply)
+                  + self_link        = (known after apply)
+                  + uid              = (known after apply)
+                }
+
+              + spec {
+                  + dns_policy                       = "ClusterFirst"
+                  + host_ipc                         = false
+                  + host_network                     = false
+                  + host_pid                         = false
+                  + hostname                         = (known after apply)
+                  + node_name                        = (known after apply)
+                  + restart_policy                   = "Always"
+                  + service_account_name             = (known after apply)
+                  + share_process_namespace          = false
+                  + termination_grace_period_seconds = 30
+
+                  + container {
+                      + image                    = "carlpaton/fizzpuzz:v1.0.0"
+                      + image_pull_policy        = (known after apply)
+                      + name                     = "fizzbuzz"
+                      + stdin                    = false
+                      + stdin_once               = false
+                      + termination_message_path = "/dev/termination-log"
+                      + tty                      = false
+
+                      + port {
+                          + container_port = 8080
+                          + protocol       = "TCP"
+                        }
+
+                      + resources {
+                          + limits {
+                              + cpu    = (known after apply)
+                              + memory = (known after apply)
+                            }
+
+                          + requests {
+                              + cpu    = (known after apply)
+                              + memory = (known after apply)
+                            }
+                        }
+
+                      + volume_mount {
+                          + mount_path        = (known after apply)
+                          + mount_propagation = (known after apply)
+                          + name              = (known after apply)
+                          + read_only         = (known after apply)
+                          + sub_path          = (known after apply)
+                        }
+                    }
+
+                  + image_pull_secrets {
+                      + name = (known after apply)
+                    }
+
+                  + volume {
+                      + name = (known after apply)
+
+                      + aws_elastic_block_store {
+                          + fs_type   = (known after apply)
+                          + partition = (known after apply)
+                          + read_only = (known after apply)
+                          + volume_id = (known after apply)
+                        }
+
+                      + azure_disk {
+                          + caching_mode  = (known after apply)
+                          + data_disk_uri = (known after apply)
+                          + disk_name     = (known after apply)
+                          + fs_type       = (known after apply)
+                          + read_only     = (known after apply)
+                        }
+
+                      + azure_file {
+                          + read_only   = (known after apply)
+                          + secret_name = (known after apply)
+                          + share_name  = (known after apply)
+                        }
+
+                      + ceph_fs {
+                          + monitors    = (known after apply)
+                          + path        = (known after apply)
+                          + read_only   = (known after apply)
+                          + secret_file = (known after apply)
+                          + user        = (known after apply)
+
+                          + secret_ref {
+                              + name = (known after apply)
+                            }
+                        }
+
+                      + cinder {
+                          + fs_type   = (known after apply)
+                          + read_only = (known after apply)
+                          + volume_id = (known after apply)
+                        }
+
+                      + config_map {
+                          + default_mode = (known after apply)
+                          + name         = (known after apply)
+
+                          + items {
+                              + key  = (known after apply)
+                              + mode = (known after apply)
+                              + path = (known after apply)
+                            }
+                        }
+
+                      + downward_api {
+                          + default_mode = (known after apply)
+
+                          + items {
+                              + mode = (known after apply)
+                              + path = (known after apply)
+
+                              + field_ref {
+                                  + api_version = (known after apply)
+                                  + field_path  = (known after apply)
+                                }
+
+                              + resource_field_ref {
+                                  + container_name = (known after apply)
+                                  + quantity       = (known after apply)
+                                  + resource       = (known after apply)
+                                }
+                            }
+                        }
+
+                      + empty_dir {
+                          + medium = (known after apply)
+                        }
+
+                      + fc {
+                          + fs_type      = (known after apply)
+                          + lun          = (known after apply)
+                          + read_only    = (known after apply)
+                          + target_ww_ns = (known after apply)
+                        }
+
+                      + flex_volume {
+                          + driver    = (known after apply)
+                          + fs_type   = (known after apply)
+                          + options   = (known after apply)
+                          + read_only = (known after apply)
+
+                          + secret_ref {
+                              + name = (known after apply)
+                            }
+                        }
+
+                      + flocker {
+                          + dataset_name = (known after apply)
+                          + dataset_uuid = (known after apply)
+                        }
+
+                      + gce_persistent_disk {
+                          + fs_type   = (known after apply)
+                          + partition = (known after apply)
+                          + pd_name   = (known after apply)
+                          + read_only = (known after apply)
+                        }
+
+                      + git_repo {
+                          + directory  = (known after apply)
+                          + repository = (known after apply)
+                          + revision   = (known after apply)
+                        }
+
+                      + glusterfs {
+                          + endpoints_name = (known after apply)
+                          + path           = (known after apply)
+                          + read_only      = (known after apply)
+                        }
+
+                      + host_path {
+                          + path = (known after apply)
+                          + type = (known after apply)
+                        }
+
+                      + iscsi {
+                          + fs_type         = (known after apply)
+                          + iqn             = (known after apply)
+                          + iscsi_interface = (known after apply)
+                          + lun             = (known after apply)
+                          + read_only       = (known after apply)
+                          + target_portal   = (known after apply)
+                        }
+
+                      + local {
+                          + path = (known after apply)
+                        }
+
+                      + nfs {
+                          + path      = (known after apply)
+                          + read_only = (known after apply)
+                          + server    = (known after apply)
+                        }
+
+                      + persistent_volume_claim {
+                          + claim_name = (known after apply)
+                          + read_only  = (known after apply)
+                        }
+
+                      + photon_persistent_disk {
+                          + fs_type = (known after apply)
+                          + pd_id   = (known after apply)
+                        }
+
+                      + quobyte {
+                          + group     = (known after apply)
+                          + read_only = (known after apply)
+                          + registry  = (known after apply)
+                          + user      = (known after apply)
+                          + volume    = (known after apply)
+                        }
+
+                      + rbd {
+                          + ceph_monitors = (known after apply)
+                          + fs_type       = (known after apply)
+                          + keyring       = (known after apply)
+                          + rados_user    = (known after apply)
+                          + rbd_image     = (known after apply)
+                          + rbd_pool      = (known after apply)
+                          + read_only     = (known after apply)
+
+                          + secret_ref {
+                              + name = (known after apply)
+                            }
+                        }
+
+                      + secret {
+                          + default_mode = (known after apply)
+                          + optional     = (known after apply)
+                          + secret_name  = (known after apply)
+
+                          + items {
+                              + key  = (known after apply)
+                              + mode = (known after apply)
+                              + path = (known after apply)
+                            }
+                        }
+
+                      + vsphere_volume {
+                          + fs_type     = (known after apply)
+                          + volume_path = (known after apply)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  # kubernetes_service.fizzbuzz_service will be created
+  + resource "kubernetes_service" "fizzbuzz_service" {
+      + id                    = (known after apply)
+      + load_balancer_ingress = (known after apply)
+
+      + metadata {
+          + generation       = (known after apply)
+          + name             = "fizzbuzz-service"
+          + namespace        = "default"
+          + resource_version = (known after apply)
+          + self_link        = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + cluster_ip                  = (known after apply)
+          + external_traffic_policy     = (known after apply)
+          + publish_not_ready_addresses = false
+          + selector                    = {
+              + "app" = "fizzbuzz-blog"
+            }
+          + session_affinity            = "None"
+          + type                        = "NodePort"
+
+          + port {
+              + node_port   = (known after apply)
+              + port        = 8080
+              + protocol    = "TCP"
+              + target_port = "8080"
+            }
+        }
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+root@ip-172-31-13-209:~/EKS_Deploy#
 ```
-
-
-
 
 
 ## Download knd install kubectl
